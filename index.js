@@ -1,5 +1,5 @@
-const readline = require('node: readline')
-const process = require('node: process')
+const readline = require('readline')
+const process = require('process')
 
 const parametrosDaInterfaceComOUsuario = {
   input: process.stdin,
@@ -8,28 +8,27 @@ const parametrosDaInterfaceComOUsuario = {
 
 const interfaceComOUsuario = readline.createInterface(parametrosDaInterfaceComOUsuario)
 
-const dadosDaConverso = {
+const dadosDaConversa = {
   entrada:{
     valor: undefined,
     moeda: undefined,
   },
-  saida:{
+  saida: {
     moeda: undefined
   }
 }
 
-const interfaceComOUsuario.question(
+interfaceComOUsuario.question(
   'Qual o valor? ',
   function(resposta) {
     dadosDaConversa.entrada.valor = resposta
-
-    const interfaceComOUsuario.question(
+    interfaceComOUsuario.question(
       'Qual a moeda de entrada? ',
       function(resposta) {
-        dadosDaConversa.entrada.moeda = resposta
+      dadosDaConversa.entrada.moeda = resposta
 
-        const interfaceComOUsuario.question(
-        'Qual a moeda de saida? ',
+        interfaceComOUsuario.question(
+          'Qual a moeda de saida? ',
           function(resposta) {
             dadosDaConversa.saida.moeda = resposta
             interfaceComOUsuario.close()

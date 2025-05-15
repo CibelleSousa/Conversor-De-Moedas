@@ -1,13 +1,3 @@
-const readline = require('readline')
-const process = require('process')
-
-const parametrosDaInterfaceComOUsuario = {
-  input: process.stdin,
-  output: process.stdout,
-}
-
-const interfaceComOUsuario = readline.createInterface(parametrosDaInterfaceComOUsuario)
-
 const dadosDaConversa = {
   entrada:{
     valor: undefined,
@@ -18,23 +8,32 @@ const dadosDaConversa = {
   }
 }
 
-interfaceComOUsuario.question(
-  'Qual o valor? ',
-  function(resposta) {
-    dadosDaConversa.entrada.valor = resposta
-    interfaceComOUsuario.question(
-      'Qual a moeda de entrada? ',
-      function(resposta) {
-      dadosDaConversa.entrada.moeda = resposta
+async function perguntar(pergunta) {
+  return new Promise(function(retornar){
+    const readline = require('readline')
+    const process = require('process')
 
-        interfaceComOUsuario.question(
-          'Qual a moeda de saida? ',
-          function(resposta) {
-            dadosDaConversa.saida.moeda = resposta
-            interfaceComOUsuario.close()
-          }
-        )
+    const parametrosDaInterfaceComOUsuario = {
+      input: process.stdin,
+      output: process.stdout,
+    }
+
+    const interfaceComOUsuario = readline.createInterface(parametrosDaInterfaceComOUsuario)
+    
+    interfaceComOUsuario.question(
+      pergunta,
+      function(resposta){
+        retornar(resposta)
+        interfaceComOUsuario.close()
       }
     )
-  }
-)
+  })
+}
+
+async function receberParametrosDoUsuario() {
+    dadosDaConversa.entrada.valor = await perguntar('Qual o valor? ')
+    dadosDaConversa.entrada.moeda = await perguntar('Qual a moeda de entrada? ')
+    dadosDaConversa.saida.moeda = await perguntar('Qual a moeda de saída? ')
+}
+
+receberParametrosDoUsuario()

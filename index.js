@@ -1,4 +1,5 @@
 const dadosDaConversa = {
+  cotacoes: [],
   entrada:{
     valor: undefined,
     moeda: undefined,
@@ -52,11 +53,47 @@ async function receberDadosApiBinance() {
   }
 }
 
+async function tratarDadosDaApi() {
+  const moedas = await receberDadosApiBinance()
+
+  const paraBTC = moedas
+    .filter(cotacoes =>cotacoes.symbol.endsWith('BTC'))
+    .map(cotacoes => ({
+      moeda: cotacoes.symbol.substring(0, cotacoes.symbol.indexOf('BTC')),
+      valor: parseFloat(cotacoes.lastPrice)
+    }))
+
+  const deBTC = moedas
+    .filter(cotacoes => cotacoes.symbol.startsWith('BTC'))
+    .map(cotacoes => ({
+      moeda: cotacoes.symbol.substring(3),
+      valor : 1 / parseFloat(cotacoes.lastPrice)
+    }))
+  
+  dadosDaConversa.cotacoes = [
+    ...paraBTC,
+    ...deBTC,
+  ]
+}
+
+async function calcularConversao() {
+  const valorDeEntrada = dadosDaConversa.entrada.valor
+  const moedaDeEntrada = (dadosDaConversa.entrada.moeda || 'BTC').toUpperCase()
+  const moedaDeSaida = (dadosDaConversa.saida.moeda || 'USDT').toUpperCase()
+
+  if(isNaN(valorDeEntrada)){
+    console.error(`ERRO: Valor de entrada deve ser numérico.`)
+    return
+  }
+  
+  await tratarDadosDaApi()
+}
+
 async function main() {
   console.info('\n     Conversor de Moedas $')
   console.info('-------------------------------')
   await receberParametrosDoUsuario()
-  await receberDadosApiBinance()
+  await calcularConversao()
   console.info('\n\nFim do programa! Volte sempre.\n\n')  
 }
 

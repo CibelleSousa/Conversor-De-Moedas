@@ -87,6 +87,28 @@ async function calcularConversao() {
   }
   
   await tratarDadosDaApi()
+
+  const cotacaoDaMoedaDeEntradaParaBtc = moedaDeEntrada === 'BTC' ? 1 : dadosDaConversa.cotacoes.find(cotacao => cotacao.moeda === moedaDeEntrada)?.valor
+  if(cotacaoDaMoedaDeEntradaParaBtc === undefined){
+    console.error(`ERRO: Moeda não existe "${moedaDeEntrada}".`)
+  }
+
+  const cotacaoDaMoedaDeSaidaParaBtc = moedaDeSaida === 'BTC' ? 1 : dadosDaConversa.cotacoes.find(cotacao => cotacao.moeda === moedaDeSaida)?.valor
+  if(cotacaoDaMoedaDeSaidaParaBtc === undefined){
+    console.error(`ERRO: Moeda não existe "${moedaDeSaida}".`)
+  }
+
+  if(cotacaoDaMoedaDeEntradaParaBtc === undefined || cotacaoDaMoedaDeSaidaParaBtc === undefined){
+    return
+  }
+
+  const razao = cotacaoDaMoedaDeEntradaParaBtc / cotacaoDaMoedaDeSaidaParaBtc
+  const valorDeSaida = valorDeEntrada * razao
+
+  const valorDeEntradaDecimais = moedaDeEntrada.includes('USD') || moedaDeEntrada.includes('BRL') ? 2 : 8
+  const valorDeSaidaDecimais = moedaDeSaida.includes('USD') || moedaDeSaida.includes('BRL') ? 2 : 8
+
+  console.log(`\nRESULTADO: ${valorDeEntrada.toFixed(valorDeEntradaDecimais)} ${moedaDeEntrada} -> ${valorDeSaida.toFixed(valorDeSaidaDecimais)} ${moedaDeSaida}`)
 }
 
 async function main() {

@@ -31,9 +31,33 @@ async function perguntar(pergunta) {
 }
 
 async function receberParametrosDoUsuario() {
-    dadosDaConversa.entrada.valor = await perguntar('Qual o valor? ')
+    dadosDaConversa.entrada.valor =  parseFloat(await perguntar('Qual o valor? '))
     dadosDaConversa.entrada.moeda = await perguntar('Qual a moeda de entrada? ')
     dadosDaConversa.saida.moeda = await perguntar('Qual a moeda de saída? ')
 }
 
-receberParametrosDoUsuario()
+async function receberDadosApiBinance() {
+  const fs = require('fs')
+  const arquivoDoUltimoResultado = __dirname + '/ultimoResultado.json'
+  try{
+    const url = 'https://api2.binance.com/api/v3/ticker/24hr'
+    const resposta = await fetch(url)
+    const json = await resposta.json()
+    fs.writeFileSync(arquivoDoUltimoResultado, JSON.stringify(json, null, 2))
+    return json
+  } catch(erro){
+    const ultimoResultado = fs.readFileSync(arquivoDoUltimoResultado).toString()
+    const json = JSON.parse(ultimoResultado)
+    return json
+  }
+}
+
+async function main() {
+  console.info('\n     Conversor de Moedas $')
+  console.info('-------------------------------')
+  await receberParametrosDoUsuario()
+  await receberDadosApiBinance()
+  console.info('\n\nFim do programa! Volte sempre.\n\n')  
+}
+
+main()
